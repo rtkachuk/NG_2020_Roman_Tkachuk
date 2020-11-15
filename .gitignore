@@ -1,4 +1,4 @@
 *.exe
 *.pro
 *.pro.user
-/build*
+*/build*
