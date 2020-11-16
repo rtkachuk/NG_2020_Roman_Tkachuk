@@ -25,6 +25,9 @@ int main()
 	char userAction;
 	int playerPosX = 0;
 	int playerPosY = 0;
+	int inventorySize = 10;
+	char inventoryItems[10];
+	int inventoryAmounts[10];
 
 	// Right after program start, first point: generate our "world".
 	// In this case: create double for loop (outer loop used for shifting by rows, and inner used to
@@ -55,6 +58,14 @@ int main()
 		}
 	}
 
+	// Now, let's init our inventory, and fill it with empty values
+	//
+
+	for (int i=0; i<inventorySize; i++) {
+		inventoryItems[i] = 0;
+		inventoryAmounts[i] = 0;
+	}
+
 	// And, we ended up level generation in our map! So, let's do the 'engine' part, which basically contain infinite loop.
 	// Each turn loop waiting for user input. And according to user input, the game will react.
 	//
@@ -75,11 +86,11 @@ int main()
 		if (playerPosY+1 < mapSize) playerMap[playerPosY+1][playerPosX] = map[playerPosY+1][playerPosX];
 		if (playerPosX+1 < mapSize) playerMap[playerPosY][playerPosX+1] = map[playerPosY][playerPosX+1];
 		if (playerPosX+1 < mapSize && playerPosY+1 < mapSize) playerMap[playerPosY+1][playerPosX+1] = map[playerPosY+1][playerPosX+1];
-		if (playerPosY-1 < mapSize) playerMap[playerPosY-1][playerPosX] = map[playerPosY-1][playerPosX];
-		if (playerPosX-1 < mapSize) playerMap[playerPosY][playerPosX-1] = map[playerPosY][playerPosX-1];
-		if (playerPosX-1 < mapSize && playerPosY-1 < mapSize) playerMap[playerPosY-1][playerPosX-1] = map[playerPosY-1][playerPosX-1];
-		if (playerPosX-1 < mapSize && playerPosY+1 < mapSize) playerMap[playerPosY-1][playerPosX+1] = map[playerPosY-1][playerPosX+1];
-		if (playerPosX+1 < mapSize && playerPosY-1 < mapSize) playerMap[playerPosY+1][playerPosX-1] = map[playerPosY+1][playerPosX-1];
+		if (playerPosY-1 >= 0) playerMap[playerPosY-1][playerPosX] = map[playerPosY-1][playerPosX];
+		if (playerPosX-1 >= 0) playerMap[playerPosY][playerPosX-1] = map[playerPosY][playerPosX-1];
+		if (playerPosX-1 >= 0 && playerPosY-1 >= 0) playerMap[playerPosY-1][playerPosX-1] = map[playerPosY-1][playerPosX-1];
+		if (playerPosY-1 >= 0 && playerPosX+1 < mapSize) playerMap[playerPosY-1][playerPosX+1] = map[playerPosY-1][playerPosX+1];
+		if (playerPosY+1 < mapSize && playerPosX-1 >= 0) playerMap[playerPosY+1][playerPosX-1] = map[playerPosY+1][playerPosX-1];
 
 		// Now, let's show our 'playerMap' to screen, and give our player at least some information of the surface.
 		//
@@ -116,10 +127,30 @@ int main()
 		cin >> userAction;
 
 		switch (userAction) {
-			case 'w': playerPosY--; break;
-			case 's': playerPosY++; break;
-			case 'a': playerPosX--; break;
-			case 'd': playerPosX++; break;
+			case 'w': if (playerPosY-1 >= 0) playerPosY--; break;
+			case 's': if (playerPosY+1 < mapSize) playerPosY++; break;
+			case 'a': if (playerPosX-1 >= 0) playerPosX--; break;
+			case 'd': if (playerPosX+1 < mapSize) playerPosX++; break;
+			case 'i': {
+				system("clear");
+				cout << "Inventory" << endl;
+				cout << "======================================" << endl;
+				for (int i=0; i<inventorySize; i++) {
+					if (inventoryAmounts[i] != 0) {
+						switch(inventoryItems[i]) {
+							case 'a' : cout << "Hand axe x "; break;
+							case 'p' : cout << "pills x "; break;
+							default: cout << "UNKNOWN [" << inventoryItems[i] << "] x ";
+						}
+						cout << inventoryAmounts[i] << endl;
+					}
+				}
+				cout << "======================================" << endl;
+				cin.ignore();
+				cin.get();
+
+			} break;
+			case 'q': return 0;
 		}
 	}
 }
