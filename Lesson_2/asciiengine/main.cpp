@@ -29,6 +29,8 @@ int main()
 	char inventoryItems[10];
 	int inventoryAmounts[10];
 
+	int playerExperience = 0;
+
 	// Right after program start, first point: generate our "world".
 	// In this case: create double for loop (outer loop used for shifting by rows, and inner used to
 	// work with data inside columns.
@@ -122,6 +124,9 @@ int main()
 						default: cout << playerMap[row][col]; // Otherwise - just show item as it is
 					}
 			}
+			if (row == 0) {
+				cout << "\t\e[33mExperience\e[39m: " << playerExperience;
+			}
 			cout << endl;
 		}
 
@@ -140,10 +145,10 @@ int main()
 			// check the existance of this place.
 			//
 
-			case 'w': if (playerPosY-1 >= 0) if (map[playerPosY-1][playerPosX] == '.') playerPosY--; break;
-			case 's': if (playerPosY+1 < mapSize) if (map[playerPosY+1][playerPosX] == '.') playerPosY++; break;
-			case 'a': if (playerPosX-1 >= 0) if (map[playerPosY][playerPosX-1] == '.') playerPosX--; break;
-			case 'd': if (playerPosX+1 < mapSize) if (map[playerPosY][playerPosX+1] == '.') playerPosX++; break;
+			case 'w': if (playerPosY-1 >= 0) if (map[playerPosY-1][playerPosX] == '.') { playerPosY--; playerExperience++; } break;
+			case 's': if (playerPosY+1 < mapSize) if (map[playerPosY+1][playerPosX] == '.') { playerPosY++; playerExperience++; } break;
+			case 'a': if (playerPosX-1 >= 0) if (map[playerPosY][playerPosX-1] == '.') { playerPosX--; playerExperience++; } break;
+			case 'd': if (playerPosX+1 < mapSize) if (map[playerPosY][playerPosX+1] == '.') { playerPosX++; playerExperience++; } break;
 
 			// Inspect inventory button
 			//
