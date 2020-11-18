@@ -136,10 +136,14 @@ int main()
 			// Basic movement actions
 			//
 
-			case 'w': if (playerPosY-1 >= 0) playerPosY--; break;
-			case 's': if (playerPosY+1 < mapSize) playerPosY++; break;
-			case 'a': if (playerPosX-1 >= 0) playerPosX--; break;
-			case 'd': if (playerPosX+1 < mapSize) playerPosX++; break;
+			// Here I used Double 'if' mechanism. This means, that before check the place to move (this is fields, or not?) we should
+			// check the existance of this place.
+			//
+
+			case 'w': if (playerPosY-1 >= 0) if (map[playerPosY-1][playerPosX] == '.') playerPosY--; break;
+			case 's': if (playerPosY+1 < mapSize) if (map[playerPosY+1][playerPosX] == '.') playerPosY++; break;
+			case 'a': if (playerPosX-1 >= 0) if (map[playerPosY][playerPosX-1] == '.') playerPosX--; break;
+			case 'd': if (playerPosX+1 < mapSize) if (map[playerPosY][playerPosX+1] == '.') playerPosX++; break;
 
 			// Inspect inventory button
 			//
