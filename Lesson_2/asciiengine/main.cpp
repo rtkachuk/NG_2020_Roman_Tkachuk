@@ -19,9 +19,9 @@ int main()
 	// playerPox[X,Y] - contain player position for X and Y.
 	//
 
-	int mapSize = 10;
-	char map[10][10];
-	char playerMap[10][10];
+	int mapSize = 30;
+	char map[30][30];
+	char playerMap[30][30];
 	char userAction;
 	int playerPosX = 0;
 	int playerPosY = 0;
@@ -65,6 +65,11 @@ int main()
 		inventoryItems[i] = 0;
 		inventoryAmounts[i] = 0;
 	}
+
+	// For example, let's hide small axe in our map for player to pick up
+	//
+
+	map[5][5] = 'a'; // Hand axe!
 
 	// And, we ended up level generation in our map! So, let's do the 'engine' part, which basically contain infinite loop.
 	// Each turn loop waiting for user input. And according to user input, the game will react.
@@ -127,10 +132,18 @@ int main()
 		cin >> userAction;
 
 		switch (userAction) {
+
+			// Basic movement actions
+			//
+
 			case 'w': if (playerPosY-1 >= 0) playerPosY--; break;
 			case 's': if (playerPosY+1 < mapSize) playerPosY++; break;
 			case 'a': if (playerPosX-1 >= 0) playerPosX--; break;
 			case 'd': if (playerPosX+1 < mapSize) playerPosX++; break;
+
+			// Inspect inventory button
+			//
+
 			case 'i': {
 				system("clear");
 				cout << "Inventory" << endl;
@@ -150,6 +163,82 @@ int main()
 				cin.get();
 
 			} break;
+
+			// Pick up item
+			//
+
+			case 'g': {
+
+				// Give player ability to check place, from where we can pick up item
+				//
+
+				cout << "Select place where we can pick up item: " << endl;
+				cout << "[7][8][9]" << endl;
+				cout << "[4][5][6]" << endl;
+				cout << "[1][2][3]" << endl;
+				cout << ">";
+				cin >> userAction;
+
+				// Here we need to get item position (according to user input)
+
+				char itemToPickUp = '.';
+				int itemPosX = 0;
+				int itemPosY = 0;
+				switch(userAction) {
+					case '7': itemPosY = playerPosY-1; itemPosX = playerPosX-1; itemToPickUp = map[playerPosY-1][playerPosX-1]; break;
+					case '8': itemPosY = playerPosY-1; itemPosX = playerPosX; itemToPickUp = map[playerPosY-1][playerPosX]; break;
+					case '9': itemPosY = playerPosY-1; itemPosX = playerPosX+1; itemToPickUp = map[playerPosY-1][playerPosX+1]; break;
+					case '4': itemPosY = playerPosY; itemPosX = playerPosX-1; itemToPickUp = map[playerPosY][playerPosX-1]; break;
+					case '5': itemPosY = playerPosY; itemPosX = playerPosX; itemToPickUp = map[playerPosY][playerPosX]; break;
+					case '6': itemPosY = playerPosY; itemPosX = playerPosX+1; itemToPickUp = map[playerPosY][playerPosX+1]; break;
+					case '1': itemPosY = playerPosY+1; itemPosX = playerPosX-1; itemToPickUp = map[playerPosY+1][playerPosX-1]; break;
+					case '2': itemPosY = playerPosY+1; itemPosX = playerPosX; itemToPickUp = map[playerPosY+1][playerPosX]; break;
+					case '3': itemPosY = playerPosY+1; itemPosX = playerPosX+1; itemToPickUp = map[playerPosY+1][playerPosX+1]; break;
+				}
+
+				// Check item, that we found. Currently we shouldn't grab:
+				// - fields (.)
+				// - trees (t)
+				// - stones(s)
+				// - water (w)
+				//
+
+				if (itemToPickUp != '.' &&
+						itemToPickUp != 't' &&
+						itemToPickUp != 's' &&
+						itemToPickUp != 'w') {
+					int positionForItem = 0;
+
+					// Now find proper position for item inside our inventory
+					//
+
+					while (positionForItem < inventorySize) {
+
+						// If we successfully found place for item -- just add it to the inventory
+						//
+
+						if (inventoryAmounts[positionForItem] == 0) {
+							inventoryItems[positionForItem] = itemToPickUp;
+							inventoryAmounts[positionForItem]++;
+
+							// Remove item from map :3
+							//
+
+							map[itemPosY][itemPosX] = '.';
+
+							// Now it is in our unventory 3
+
+							break;
+						}
+						positionForItem++;
+					}
+				}
+
+			} break;
+
+			// Quit
+			//
+
 			case 'q': return 0;
 		}
 	}
