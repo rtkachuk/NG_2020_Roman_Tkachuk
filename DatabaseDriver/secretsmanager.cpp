@@ -41,7 +41,7 @@ bool SecretsManager::addUser(QString name, QString password)
             .arg(name)
             .arg(password);
     if (!execSql(queryString)) {
-        qDebug() << "ERROR Creating user!";
+        log("ERROR Creating user!");
         return false;
     }
     return true;
@@ -53,25 +53,25 @@ int SecretsManager::checkPassword(QString name, QString password)
     QString queryString = "SELECT password FROM users WHERE login='" + name + "';";
     bool ok = query.exec(queryString);
     if (!ok) {
-        qDebug() << "ERROR executting query: " << query.lastError().databaseText();
+        log("ERROR executting query: " + query.lastError().databaseText());
         return 1;
     }
 
     ok = query.next();
 
     if (!ok) {
-        qDebug() << "ERROR: no such user!";
+        log("ERROR: no such user!");
         return 2;
     }
 
     QString passwordFromDatabase = query.value("password").toString();
 
     if (password != passwordFromDatabase) {
-        qDebug() << "ERROR: Wrong password!";
+        log("ERROR: Wrong password!");
         return 3;
     }
 
-    qDebug() << "USER " << name << " PASSWORD CHECK: OK!";
+    log("USER " + name + " PASSWORD CHECK: OK!");
     return 0;
 }
 
@@ -84,7 +84,7 @@ bool SecretsManager::createNewDatabase()
 {
     QString queryString = "CREATE TABLE IF NOT EXISTS users (login TEXT, password TEXT);";
     if (!execSql(queryString)) {
-        qDebug() << "ERROR: Can't create init table!";
+        log("ERROR: Can't create init table!");
         return false;
     }
     return true;
@@ -106,16 +106,23 @@ int SecretsManager::checkUserExist(QString name)
     QString queryString = "SELECT password FROM users WHERE login='" + name + "';";
     bool ok = query.exec(queryString);
     if (!ok) {
-        qDebug() << "ERROR checking user exist: " << query.lastError().databaseText();
+        log("ERROR checking user exist: " + query.lastError().databaseText());
         return 1;
     }
 
     if (query.next()) {
-        qDebug() << "ERROR: User " + name + " already exists!";
+        log("ERROR: User " + name + " already exists!");
         return 2;
     }
 
-    qDebug() << "Username " + name + " is available!";
+    log("Username " + name + " is available!");
     return 0;
+}
+
+void SecretsManager::log(QString message)
+{
+    if (m_debugMode) {
+        qDebug() << message;
+    }
 }
 
